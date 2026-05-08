@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                  bilibili_script
 // @namespace             Bilibili_script
-// @version               0.1
+// @version               0.2
 // @description           auto change bilibili video playback rate
 // @description:zh-CN     哔哩哔哩 (゜-゜)つロ 干杯~-bilibili
 // @author                萤火FyrGlow, sc
@@ -194,8 +194,9 @@
       menu.appendChild(createMenuItem(rate, index, video, result)),
     );
 
+    // it is useless.
     //bindRateWheelControl();
-    console.log("[web-bilibili-script] 自定义倍速菜单已注入！");
+    //console.log("[web-bilibili-script] 自定义倍速菜单已注入！");
     return true;
   }
 
@@ -227,23 +228,27 @@
   }
 
   /** 按键调速 */
-  let lastSavedRate;
-
   function bindKeyControls() {
-    lastSavedRate = RateStorage.load();
+    let lastSavedRate = RateStorage.load();
     document.addEventListener("keydown", (event) => {
       const video = DOM.getVideo();
       if (!video) return;
 
       let rate = video.playbackRate;
 
-      if (event.key === "x") rate = Math.max(0.5, rate - 0.5);
-      else if (event.key === "c") rate = Math.min(16, rate + 0.5);
-      else if (event.key === "z") {
-        rate =
-          Math.abs(rate - 1) < 0.001
-            ? lastSavedRate || 1
-            : ((lastSavedRate = rate), 1);
+      if (event.shiftKey && event.code === "KeyX") {
+        rate = Math.max(0.1, rate - 0.1);
+      } else if (event.shiftKey && event.code === "KeyC") {
+        rate = Math.min(16, rate + 0.1); // max speed is 16x
+      } else if (event.shiftKey && event.code === "KeyZ") {
+        // switch toggle between 1x and saved rate
+        if (Math.abs(rate - 1) < 0.001) {
+          rate = lastSavedRate || 1;
+        } else {
+          lastSavedRate = rate;
+          rate = 1;
+        }
+        // only save one decimal.
         rate = Math.floor(rate * 10) / 10;
         video.playbackRate = rate;
         const result = DOM.getResult();
