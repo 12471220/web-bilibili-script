@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                  bilibili_script
 // @namespace             bilibili_script
-// @version               0.2
+// @version               0.21
 // @description           auto change bilibili video playback rate
 // @description:zh-CN     哔哩哔哩 (゜-゜)つロ 干杯~-bilibili
 // @author                萤火FyrGlow, sc
@@ -259,7 +259,7 @@
         return;
       } else return;
 
-      rate = Math.floor(rate * 10) / 10;
+      rate = Math.round(rate * 10) / 10;
       video.playbackRate = rate;
 
       const result = DOM.getResult();
