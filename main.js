@@ -1,9 +1,8 @@
 // ==UserScript==
 // @name                  bilibili_script
-// @name:zh-CN            更好的哔哩哔哩
 // @namespace             Bilibili_script
-// @version               1.2.0
-// @description           Better Bilibili
+// @version               0.1
+// @description           auto change bilibili video playback rate
 // @description:zh-CN     哔哩哔哩 (゜-゜)つロ 干杯~-bilibili
 // @author                萤火FyrGlow, sc
 // @match                 https://www.bilibili.com/video/*
@@ -13,7 +12,9 @@
 // @icon                  https://static.hdslb.com/images/favicon.ico
 // @homepage              https://github.com/12471220
 // @grant                 none
-// @license               CC BY-NC-ND
+// @license               BSD
+// @updateURL             https://raw.githubusercontent.com/12471220/web-bilibili-script/main/main.js
+// @downloadURL           https://raw.githubusercontent.com/12471220/web-bilibili-script/main/main.js
 // ==/UserScript==
 
 (() => {
