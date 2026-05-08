@@ -45,34 +45,41 @@
     if (location.href.includes("/list/")) return "list";
     return "unknown";
   }
-  let pageType;
-  let storageKey;
-
   /** 存储管理 */
   const RateStorage = {
+    _rateKey: null,
+    _rateItemKey: [],
+
+    init() {
+      const pageType = getPageType();
+      this._rateKey = `web-bilibili-script_rate_${pageType}`;
+      this._rateItemKey = defaultRates.map(
+        (_, i) => `web-bilibili-script_rate_item_${pageType}_${i}`,
+      );
+      return this;
+    },
+
     save(rate) {
-      localStorage.setItem(storageKey, rate);
-      console.log(`[BetterBili] 当前倍速已保存：${rate}x`);
+      localStorage.setItem(this._rateKey, rate);
+      console.log(`[web-bilibili-script] 当前倍速已保存：${rate}x`);
     },
     load() {
-      const r = parseFloat(localStorage.getItem(storageKey));
+      const r = parseFloat(localStorage.getItem(this._rateKey));
       return isNaN(r) ? 1.0 : r;
     },
     saveItem(index, rate) {
-      localStorage.setItem(`BetterBili_rate_item_${pageType}_${index}`, rate);
+      localStorage.setItem(this._rateItemKey[index], rate);
     },
-    loadItems(defaultRates) {
+    loadItems() {
       return defaultRates.map((rate, index) => {
-        const r = parseFloat(
-          localStorage.getItem(`BetterBili_rate_item_${pageType}_${index}`),
-        );
+        const r = parseFloat(localStorage.getItem(this._rateItemKey[index]));
         return isNaN(r) ? rate : r;
       });
     },
   };
 
   /** 默认倍速 */
-  const defaultRates = [3, 2, 1.8, 1.5, , 1.3, 1, 0.5, 0.07];
+  const defaultRates = [3, 2, 1.8, 1.5, 1.3, 1.2, 1, 0.5, 0.07];
 
   /** DOM工具 */
   const DOM = {
@@ -121,7 +128,7 @@
         .forEach((el) => el.classList.remove("bpx-state-active"));
       item.classList.add("bpx-state-active");
       RateStorage.save(newRate);
-      console.log(`[BetterBili] 倍速已设置为：${newRate}x`);
+      console.log(`[web-bilibili-script] 倍速已设置为：${newRate}x`);
     });
 
     /** 右键编辑 */
@@ -151,7 +158,7 @@
         item.dataset.value = newRate;
         item.textContent = displayRate + "x";
         RateStorage.saveItem(item.dataset.index, newRate);
-        console.log(`[BetterBili] 新的倍速选项已保存：${newRate}x`);
+        console.log(`[web-bilibili-script] 新的倍速选项已保存：${newRate}x`);
       }
 
       input.addEventListener("keydown", (evt) => {
@@ -179,16 +186,16 @@
     const savedRate = RateStorage.load();
     if (Math.abs(video.playbackRate - savedRate) > 0.001) {
       video.playbackRate = savedRate;
-      console.log(`[BetterBili] 已应用保存的倍速：${savedRate}x`);
+      console.log(`[web-bilibili-script] 已应用保存的倍速：${savedRate}x`);
     }
 
-    const customRates = RateStorage.loadItems(defaultRates);
+    const customRates = RateStorage.loadItems();
     customRates.forEach((rate, index) =>
       menu.appendChild(createMenuItem(rate, index, video, result)),
     );
 
     //bindRateWheelControl();
-    console.log("[BetterBili] 自定义倍速菜单已注入！");
+    console.log("[web-bilibili-script] 自定义倍速菜单已注入！");
     return true;
   }
 
@@ -216,7 +223,7 @@
       result.textContent = rate === 1 ? "倍速" : rate.toFixed(1) + "x";
 
     RateStorage.save(rate);
-    console.log(`[BetterBili] 滚轮调节倍速：${rate}x`);
+    console.log(`[web-bilibili-script] 滚轮调节倍速：${rate}x`);
   }
 
   /** 按键调速 */
@@ -243,7 +250,7 @@
         if (result) {
           result.textContent = rate === 1 ? "倍速" : rate.toFixed(1) + "x";
         }
-        console.log(`[BetterBili] 快捷键调节倍速：${rate}x`);
+        console.log(`[web-bilibili-script] 快捷键调节倍速：${rate}x`);
         return;
       } else return;
 
@@ -256,7 +263,7 @@
       }
 
       RateStorage.save(rate);
-      console.log(`[BetterBili] 快捷键调节倍速：${rate}x`);
+      console.log(`[web-bilibili-script] 快捷键调节倍速：${rate}x`);
     });
   }
 
@@ -264,7 +271,7 @@
   function initBiliGain() {
     const video = DOM.getVideo();
     if (!video) {
-      console.log("[BetterBili] [Audio] 未找到 video 元素！");
+      console.log("[web-bilibili-script] [Audio] 未找到 video 元素！");
       return;
     }
 
@@ -277,7 +284,7 @@
       window._BiliGainNode = gain;
       window._BiliVolumeDB = 0;
 
-      console.log("[BetterBili] [Audio] 初始化完成！");
+      console.log("[web-bilibili-script] [Audio] 初始化完成！");
     }
 
     const gain = window._BiliGainNode;
@@ -336,7 +343,10 @@
 
     setInterval(() => {
       if (video.currentSrc !== lastSrc) {
-        console.log("[BetterBili] [Audio] 检测到视频源变化:", video.currentSrc);
+        console.log(
+          "[web-bilibili-script] [Audio] 检测到视频源变化:",
+          video.currentSrc,
+        );
         lastSrc = video.currentSrc;
         window._BiliVolumeDB = 0;
         gain.gain.value = 0;
@@ -389,7 +399,9 @@
     new MutationObserver(() => {
       if (location.href !== lastUrl) {
         lastUrl = location.href;
-        console.log("[BetterBili] 检测到页面切换，重新注入倍速设置...");
+        console.log(
+          "[web-bilibili-script] 检测到页面切换，重新注入倍速设置...",
+        );
         setTimeout(() => {
           injectSpeedMenu();
         }, 1000);
@@ -422,8 +434,7 @@
   function main() {
     injectStyles();
 
-    pageType = getPageType();
-    storageKey = `BetterBili_rate_${pageType}`;
+    RateStorage.init();
 
     bindKeyControls();
     bindPageNavObserver();
