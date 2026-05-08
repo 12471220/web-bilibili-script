@@ -59,18 +59,18 @@
       return this;
     },
 
-    save(rate) {
+    saveRage(rate) {
       localStorage.setItem(this._rateKey, rate);
       console.log(`[web-bilibili-script] 当前倍速已保存：${rate}x`);
     },
-    load() {
+    loadRate() {
       const r = parseFloat(localStorage.getItem(this._rateKey));
       return isNaN(r) ? 1.0 : r;
     },
-    saveItem(index, rate) {
+    saveRateItem(index, rate) {
       localStorage.setItem(this._rateItemKey[index], rate);
     },
-    loadItems() {
+    loadRateItems() {
       return defaultRates.map((rate, index) => {
         const r = parseFloat(localStorage.getItem(this._rateItemKey[index]));
         return isNaN(r) ? rate : r;
