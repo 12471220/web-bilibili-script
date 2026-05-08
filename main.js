@@ -59,7 +59,7 @@
       return this;
     },
 
-    saveRage(rate) {
+    saveRate(rate) {
       localStorage.setItem(this._rateKey, rate);
       console.log(`[web-bilibili-script] 当前倍速已保存：${rate}x`);
     },
@@ -127,7 +127,7 @@
         .querySelectorAll("li")
         .forEach((el) => el.classList.remove("bpx-state-active"));
       item.classList.add("bpx-state-active");
-      RateStorage.save(newRate);
+      RateStorage.saveRate(newRate);
       console.log(`[web-bilibili-script] 倍速已设置为：${newRate}x`);
     });
 
@@ -157,7 +157,7 @@
             : newRate.toString();
         item.dataset.value = newRate;
         item.textContent = displayRate + "x";
-        RateStorage.saveItem(item.dataset.index, newRate);
+        RateStorage.saveRateItem(item.dataset.index, newRate);
         console.log(`[web-bilibili-script] 新的倍速选项已保存：${newRate}x`);
       }
 
@@ -183,13 +183,13 @@
 
     DOM.clearMenu(menu);
 
-    const savedRate = RateStorage.load();
+    const savedRate = RateStorage.loadRate();
     if (Math.abs(video.playbackRate - savedRate) > 0.001) {
       video.playbackRate = savedRate;
       console.log(`[web-bilibili-script] 已应用保存的倍速：${savedRate}x`);
     }
 
-    const customRates = RateStorage.loadItems();
+    const customRates = RateStorage.loadRateItems();
     customRates.forEach((rate, index) =>
       menu.appendChild(createMenuItem(rate, index, video, result)),
     );
@@ -223,13 +223,13 @@
     if (result)
       result.textContent = rate === 1 ? "倍速" : rate.toFixed(1) + "x";
 
-    RateStorage.save(rate);
+    RateStorage.saveRate(rate);
     console.log(`[web-bilibili-script] 滚轮调节倍速：${rate}x`);
   }
 
   /** 按键调速 */
   function bindKeyControls() {
-    let lastSavedRate = RateStorage.load();
+    let lastSavedRate = RateStorage.loadRate();
     document.addEventListener("keydown", (event) => {
       const video = DOM.getVideo();
       if (!video) return;
@@ -267,7 +267,7 @@
         result.textContent = rate === 1 ? "倍速" : rate.toFixed(1) + "x";
       }
 
-      RateStorage.save(rate);
+      RateStorage.saveRate(rate);
       console.log(`[web-bilibili-script] 快捷键调节倍速：${rate}x`);
     });
   }
