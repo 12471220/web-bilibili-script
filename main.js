@@ -240,8 +240,9 @@
         rate = Math.floor(rate * 10) / 10;
         video.playbackRate = rate;
         const result = DOM.getResult();
-        if (result)
+        if (result) {
           result.textContent = rate === 1 ? "倍速" : rate.toFixed(1) + "x";
+        }
         console.log(`[BetterBili] 快捷键调节倍速：${rate}x`);
         return;
       } else return;
@@ -250,8 +251,9 @@
       video.playbackRate = rate;
 
       const result = DOM.getResult();
-      if (result)
+      if (result) {
         result.textContent = rate === 1 ? "倍速" : rate.toFixed(1) + "x";
+      }
 
       RateStorage.save(rate);
       console.log(`[BetterBili] 快捷键调节倍速：${rate}x`);
