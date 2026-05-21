@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                  bilibili_script
 // @namespace             bilibili_script
-// @version               0.21
+// @version               0.3.0
 // @description           auto change bilibili video playback rate
 // @description:zh-CN     哔哩哔哩 (゜-゜)つロ 干杯~-bilibili
 // @author                萤火FyrGlow, sc
@@ -14,7 +14,6 @@
 // @grant                 none
 // @license               BSD
 // @updateURL             https://raw.githubusercontent.com/12471220/web-bilibili-script/refs/heads/master/main.js
-// @downloadURL           https://raw.githubusercontent.com/12471220/web-bilibili-script/refs/heads/master/main.js
 // ==/UserScript==
 
 (() => {
